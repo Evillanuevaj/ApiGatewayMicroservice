@@ -1,0 +1,47 @@
+  eureka:
+    instance:
+      instance-id: ${ spring.application.name }:${ random.uuid }
+    server:
+      port: 9050
+    spring:
+      application:
+        name: api-gateway
+      cloud:
+        gateway:
+          default-filters:
+            - name: SCGWGlobalFilter
+          routes:
+            - id: service-client
+              uri: lb://SERVICE-CLIENT
+              predicates:
+                - Path=/v1/client/**
+              filters:
+                - name: SCGWPreFilter
+                - name: SCGWPostFilter
+            - id: service-account
+              uri: lb://SERVICE-ACCOUNT
+              predicates:
+                - Path=/v1/account/**
+              filters:
+                - name: SCGWPreFilter
+                - name: SCGWPostFilter
+            - id: service-credit
+              uri: lb://SERVICE-CREDIT
+              predicates:
+                - Path=/v1/credit/**
+              filters:
+                - name: SCGWPreFilter
+                - name: SCGWPostFilter
+            - id: service-transactions
+              uri: lb://SERVICE-TRANSACTIONS
+              predicates:
+                - Path=/v1/transactions/**
+              filters:
+                - name: SCGWPreFilter
+                - name: SCGWPostFilter
+          discovery:
+            locator:
+              enabled: true
+        loadbalancer:
+          ribbon:
+            enabled: false
